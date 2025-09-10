@@ -30,7 +30,7 @@ async def mention_index(update: Update, context: ContextTypes.DEFAULT_TYPE):
         mentions = ""
 
         for letter, user in zip(SMS, users):
-            mentions += f"[{letter}](tg://user?id={user.id})"
+            mentions += '[' + str(letter) + '](tg://user?id=' + str(user.id) + ')'
   
         if mentions:
             await update.message.reply_text(
