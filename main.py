@@ -4,30 +4,37 @@ from telegram.constants import ParseMode
 
 TOKEN = open("./token.txt").readline()
 
+admins_list = {
+        1276598143, # Семён - Староста 0
+        2095826659, # Максим - Староста 1
+        5009803881, # Данила - Профорг
+        8153282128, # Влад - Раб Профорга
+        }
+black_list = {
+        1746213456, # Катя (ЯМЫ ФАНАТЫ КАТИ)
+        }
+
+SMS = "Друзья,ㅤоченьㅤважноеㅤсообщение!"
+
 async def mention_index(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message is None or update.effective_chat is None:
         return
     
     if "@all" in update.message.text:
-        chat_id = update.effective_chat.id
-				
-        admins = await context.bot.get_chat_administrators(chat_id)
-
-        if all(update.effective_user.id != int(f) for f in open('./adminlist.txt').readline().split()):
+        if not update.effective_user.id in admins_list: # Проверка, что отправитель админ
             return
 
-        mentions = []
-        for admin in admins:
-            user = admin.user
-            if user.is_bot or any(user.id == int(f) for f in open('./blacklist.txt').readline().split()):
-                continue
-            link = f"[{'ㅤ'}](tg://user?id={user.id})"
-            mentions.append(link)
+        admins = await context.bot.get_chat_administrators(update.effective_chat.id) # Получение админов
+        users = [user.user for user in admins if not(user.user.is_bot) and not(user.user.id in black_list)] # Проверка на бота и черный список + перевод в user
+        
+        mentions = ""
 
-
+        for letter, user in zip(SMS, users):
+            mentions += f"[{letter}](tg://user?id={user.id})"
+  
         if mentions:
             await update.message.reply_text(
-                "".join(mentions),
+                mentions+SMS[len(users):],
                 parse_mode=ParseMode.MARKDOWN
             )
 
