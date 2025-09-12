@@ -17,7 +17,7 @@ black_list = {
         1736773311 # Матвейка наставник
         }
 
-group1 = [
+group1 = {
 1175208027,
 584312843,
 1815248006,
@@ -34,8 +34,8 @@ group1 = [
 1214079884,
 5115570578,
 1924085691
-]
-group2 = [
+}
+group2 = {
 5009803881,
 6317653408,
 1232616455,
@@ -49,7 +49,7 @@ group2 = [
 2001106979,
 2095826659,
 1659787315
-]
+}
 
 SMS = "Друзья,ㅤоченьㅤважноеㅤсообщение!"
 SMS1 = "Уведомлениеㅤ1ㅤподгруппы!"
@@ -59,8 +59,8 @@ async def mention_index(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message is None or update.effective_chat is None:
         return
     
-    if "@goup1" in update.message.text:
-        if not update.effective_user.id in group1:
+    if "@group1" in update.message.text:
+        if not update.effective_user.id in group1 and not update.effective_user.id in admins_list:
             return
         
         admins = await context.bot.get_chat_administrators(update.effective_chat.id) # Получение админов
@@ -77,12 +77,12 @@ async def mention_index(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode=ParseMode.MARKDOWN
             )
 
-    if "@goup2" in update.message.text:
-        if not update.effective_user.id in group2:
+    if "@group2" in update.message.text:
+        if not update.effective_user.id in group2 and not update.effective_user.id in admins_list:
             return
         
         admins = await context.bot.get_chat_administrators(update.effective_chat.id) # Получение админов
-        users = [user.user for user in admins if not(user.user.is_bot) and not(user.user.id in black_list) and (user.user.id in group1)] # Проверка на бота и черный список + перевод в user
+        users = [user.user for user in admins if not(user.user.is_bot) and not(user.user.id in black_list) and (user.user.id in group2)] # Проверка на бота и черный список + перевод в user
         
         mentions = ""
 
